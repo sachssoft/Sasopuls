@@ -6,4 +6,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <Import Project="..\Sachssoft.Sasopuls.Views.Shared\Sachssoft.Sasopuls.Views.Shared.projitems" Label="Shared" />
+
+  <ItemGroup>
+    <PackageReference Include="Avalonia" Version="11.3.13" />
+  </ItemGroup>
+
 </Project>

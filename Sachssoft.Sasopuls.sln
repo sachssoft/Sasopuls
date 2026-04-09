@@ -44,5 +44,7 @@ Global
 	EndGlobalSection
 	GlobalSection(SharedMSBuildProjectFiles) = preSolution
 		Sachssoft.Sasopuls.Views.Shared\Sachssoft.Sasopuls.Views.Shared.projitems*{315534e4-ec68-4e5c-9456-bf7cb6a6aa31}*SharedItemsImports = 13
+		Sachssoft.Sasopuls.Views.Shared\Sachssoft.Sasopuls.Views.Shared.projitems*{7ca9150b-524a-46a8-9d4b-7fc3ae374f88}*SharedItemsImports = 5
+		Sachssoft.Sasopuls.Views.Shared\Sachssoft.Sasopuls.Views.Shared.projitems*{fe09790b-2e3d-cf32-cb66-b03372037dc4}*SharedItemsImports = 5
 	EndGlobalSection
 EndGlobal

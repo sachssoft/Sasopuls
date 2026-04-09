@@ -40,4 +40,6 @@
     <None Remove="Interaction\**" />
   </ItemGroup>
 
+  <Import Project="..\Sachssoft.Sasopuls.Views.Shared\Sachssoft.Sasopuls.Views.Shared.projitems" Label="Shared" />
+
 </Project>
