@@ -26,6 +26,10 @@
 		<!-- NuGet -->
 		<PackageLicenseExpression>MIT</PackageLicenseExpression>
 		<PackageProjectUrl>https://github.com/sachssoft/Sasopuls</PackageProjectUrl>
+		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+		<GeneratePackageOnBuild Condition="'$(Configuration)'=='Release'">True</GeneratePackageOnBuild>
+
+		<!-- GitHub Repository -->
 		<RepositoryUrl>https://github.com/sachssoft/Sasopuls.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 
