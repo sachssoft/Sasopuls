@@ -11,7 +11,12 @@ Project("{D954291E-2A0B-460D-934E-DC6B0785DB48}") = "Sachssoft.Sasopuls.Views.Sh
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sachssoft.Sasopuls.Avalonia", "Sachssoft.Sasopuls.Avalonia\Sachssoft.Sasopuls.Avalonia.csproj", "{7CA9150B-524A-46A8-9D4B-7FC3AE374F88}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sachssoft.Sasopuls.WPF", "Sachssoft.Sasopuls.WPF\Sachssoft.Sasopuls.WPF.csproj", "{89F1E21D-510F-41BF-9918-7E62E761476F}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Markdown", "Markdown", "{26E6E199-2F29-4120-89D5-EB9E47A61607}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+		README_de.md = README_de.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -31,10 +36,6 @@ Global
 		{7CA9150B-524A-46A8-9D4B-7FC3AE374F88}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{7CA9150B-524A-46A8-9D4B-7FC3AE374F88}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{7CA9150B-524A-46A8-9D4B-7FC3AE374F88}.Release|Any CPU.Build.0 = Release|Any CPU
-		{89F1E21D-510F-41BF-9918-7E62E761476F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{89F1E21D-510F-41BF-9918-7E62E761476F}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{89F1E21D-510F-41BF-9918-7E62E761476F}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{89F1E21D-510F-41BF-9918-7E62E761476F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
