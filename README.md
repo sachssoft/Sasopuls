@@ -57,4 +57,4 @@ Planned features include:
 1. Clone the repository:
 
 ```bash
-git clone https://github.com/DEIN_USERNAME/Sachssoft.Sasopuls.git
+git clone https://github.com/sachssoft/Sachssoft.Sasopuls.git

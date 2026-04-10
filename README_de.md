@@ -57,4 +57,4 @@ Geplant sind unter anderem:
 1. Repository klonen:
 
 ```bash
-git clone https://github.com/DEIN_USERNAME/Sachssoft.Sasopuls.git
+git clone https://github.com/sachssoft/Sachssoft.Sasopuls.git
