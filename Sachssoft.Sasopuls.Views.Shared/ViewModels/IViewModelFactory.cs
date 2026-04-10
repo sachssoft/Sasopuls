@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sachssoft.Sasofly.Pulse.ViewModels
+namespace Sachssoft.Sasopuls.ViewModels
 {
     /// <summary>
     /// Factory interface for creating ViewModels and providing their underlying Models.

@@ -1,19 +1,19 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Sachssoft.Sasofly.Pulse.ViewModels
+namespace Sachssoft.Sasopuls.ViewModels
 {
     /// <summary>
     /// Base class for all ViewModels in MVVM architecture.
     /// Encapsulates the underlying model and provides lifecycle hooks.
     /// </summary>
-    public abstract class ViewModelBase<TModel> : ViewModelBase, ITypedViewModel, IDisposable
+    public abstract class ModelViewModelBase<TModel> : ViewModelBase, ITrackableViewModel, IDisposable
     {
         // Das zugrunde liegende Model (wird bewusst gekapselt)
         private readonly TModel _model;
         private bool _isReloading = false;
 
-        protected ViewModelBase(TModel model)
+        protected ModelViewModelBase(TModel model)
         {
             _model = model ?? throw new ArgumentNullException(nameof(model));
         }

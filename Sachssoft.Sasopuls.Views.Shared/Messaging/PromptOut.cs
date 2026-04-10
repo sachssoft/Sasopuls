@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Threading.Tasks;
 
-namespace Sachssoft.Sasofly.Pulse.Messaging
+namespace Sachssoft.Sasopuls.Messaging
 {
     public sealed class PromptOut<TOut> : PromptBase
     {

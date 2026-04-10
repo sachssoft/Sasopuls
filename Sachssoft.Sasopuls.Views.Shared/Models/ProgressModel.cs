@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sachssoft.Sasofly.Pulse.Models
+namespace Sachssoft.Sasopuls.Models
 {
     /// <summary>
     /// Represents the progress of an operation, task, or process.

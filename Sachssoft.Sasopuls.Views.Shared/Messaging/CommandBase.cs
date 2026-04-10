@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Sachssoft.Sasofly.Pulse.Messaging
+namespace Sachssoft.Sasopuls.Messaging
 {
     public abstract class CommandBase : ICommand
     {

@@ -15,28 +15,28 @@
     <Compile Include="$(MSBuildThisFileDirectory)Basic\NullStoreBehavior.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\ActionCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\CommandBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Messaging\CommandCondition.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Messaging\CommandRule.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)messaging\ICommandRule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\Prompt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PromptBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PromptIn.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PromptInOut.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PromptOut.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\TaskCommand.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)models\ILocalized.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)models\IResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Localized_T.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\MessageModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\MessageType.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\ProgressModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Models\Result_T.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemViewModel_T1.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ItemViewModel_T2.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ITypedViewModel.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ITrackableViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelFactory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelPresentation.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelBase.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelBase_T.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ModelViewModelBase_T.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelFactoryRegistry.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelFactory_T.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelSelector_T.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ModelViewModelFactory_T.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelSelector.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)ViewModels\README.md" />

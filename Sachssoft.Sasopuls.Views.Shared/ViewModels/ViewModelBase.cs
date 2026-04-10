@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 
-namespace Sachssoft.Sasofly.Pulse.ViewModels
+namespace Sachssoft.Sasopuls.ViewModels
 {
     public class ViewModelBase : NotifyObject, INotifyDataErrorInfo
     {
@@ -12,7 +12,7 @@ namespace Sachssoft.Sasofly.Pulse.ViewModels
 
         public event EventHandler<DataErrorsChangedEventArgs>? ErrorsChanged;
 
-        public bool HasErrors => _errors.Any();
+        public bool HasErrors => _errors.Count > 0;
 
         public IEnumerable GetErrors(string? propertyName) =>
             propertyName != null && _errors.TryGetValue(propertyName, out var errors) ? errors : Enumerable.Empty<string>();

@@ -1,9 +1,6 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
-using Sachssoft.Sasofly.Pulse;
-using System.Diagnostics.CodeAnalysis;
 
-namespace Sachssoft.Sasopuls.Avalonia.Controls
+namespace Sachssoft.Sasopuls.Views
 {
     public abstract class NotifyApplication<TViewModel> : Application
         where TViewModel : NotifyObject

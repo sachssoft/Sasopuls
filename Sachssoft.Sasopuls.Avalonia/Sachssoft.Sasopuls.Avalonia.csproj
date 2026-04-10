@@ -1,15 +1,44 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-  </PropertyGroup>
+	<PropertyGroup>
+		<TargetFrameworks>net8.0;net9.0;net10.0</TargetFrameworks>
+		<Nullable>enable</Nullable>
+		<AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<RootNamespace>Sachssoft.Sasopuls</RootNamespace>
+	</PropertyGroup>
 
-  <Import Project="..\Sachssoft.Sasopuls.Views.Shared\Sachssoft.Sasopuls.Views.Shared.projitems" Label="Shared" />
+	<!-- Assembly / NuGet Metadata -->
+	<PropertyGroup>
+		<Title>Sachssoft Sasopuls For Avalonia</Title>
+		<Authors>Tobias Sachs</Authors>
+		<Company>Tobias Sachs / Sachssoft</Company>
+		<Product>Sasopuls For Avalonia</Product>
+		<AssemblyName>Sachssoft.Sasopuls.Avalonia</AssemblyName>
+		<Description>MVVM Tool Library For Avalonia</Description>
+		<Copyright>© 2026 Tobias Sachs / Sachssoft</Copyright>
 
-  <ItemGroup>
-    <PackageReference Include="Avalonia" Version="11.3.13" />
-  </ItemGroup>
+		<!-- Versionierung -->
+		<Version>1.0.0</Version>
+		<AssemblyVersion>1.0.0</AssemblyVersion>
+		<FileVersion>1.0.0</FileVersion>
+
+		<!-- NuGet -->
+		<PackageLicenseExpression>MIT</PackageLicenseExpression>
+		<PackageProjectUrl>https://github.com/sachssoft/Sasopuls</PackageProjectUrl>
+		<RepositoryUrl>https://github.com/sachssoft/Sasopuls.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+
+		<!-- Trimming / AOT -->
+		<IsTrimmable>True</IsTrimmable>
+		<IsAotCompatible>True</IsAotCompatible>
+	</PropertyGroup>
+
+	<Import Project="..\Sachssoft.Sasopuls.Views.Shared\Sachssoft.Sasopuls.Views.Shared.projitems" Label="Shared" />
+
+	<ItemGroup>
+		<PackageReference Include="Avalonia" Version="11.0.0" />
+	</ItemGroup>
 
 </Project>
+

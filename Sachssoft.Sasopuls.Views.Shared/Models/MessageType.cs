@@ -1,4 +1,4 @@
-﻿namespace Sachssoft.Sasofly.Pulse.Models
+﻿namespace Sachssoft.Sasopuls.Models
 {
     /// <summary>
     /// Represents the category or severity of a message, used for UI, logging, or system notifications.

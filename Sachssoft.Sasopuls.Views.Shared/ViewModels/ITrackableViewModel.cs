@@ -1,6 +1,6 @@
-﻿namespace Sachssoft.Sasofly.Pulse.ViewModels
+﻿namespace Sachssoft.Sasopuls.ViewModels
 {
-    public interface ITypedViewModel
+    public interface ITrackableViewModel
     {
         bool Dirty { get; }
 

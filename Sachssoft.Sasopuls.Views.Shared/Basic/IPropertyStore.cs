@@ -1,4 +1,4 @@
-﻿namespace Sachssoft.Sasofly.Pulse
+﻿namespace Sachssoft.Sasopuls
 {
     public interface IPropertyStore
     {

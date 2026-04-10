@@ -2,7 +2,7 @@
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Sachssoft.Sasofly.Pulse.ViewModels
+namespace Sachssoft.Sasopuls.ViewModels
 {
     /// <summary>
     /// Selector for ViewModels, supports either source models or factories from a registry.

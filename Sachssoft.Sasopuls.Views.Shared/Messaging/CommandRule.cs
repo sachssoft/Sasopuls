@@ -1,30 +1,30 @@
 ﻿using System;
 
-namespace Sachssoft.Sasofly.Pulse.Messaging
+namespace Sachssoft.Sasopuls.Messaging
 {
-    public sealed class CommandCondition
+    public sealed class CommandPolicy : ICommandRule
     {
         private readonly Func<object?, bool>? _canExecute;
 
-        private CommandCondition(Func<object?, bool>? canExecute)
+        private CommandPolicy(Func<object?, bool>? canExecute)
             => _canExecute = canExecute;
 
         // Ohne Parameter
-        public static CommandCondition Create(Func<bool>? canExecute)
+        public static CommandPolicy Create(Func<bool>? canExecute)
         {
-            return new CommandCondition(canExecute != null ? ((param) => canExecute()) : null);
+            return new CommandPolicy(canExecute != null ? ((param) => canExecute()) : null);
         }
 
         // Mit Parameter
-        public static CommandCondition Create(Func<object?, bool>? canExecute)
+        public static CommandPolicy Create(Func<object?, bool>? canExecute)
         {
-            return new CommandCondition(canExecute);
+            return new CommandPolicy(canExecute);
         }
 
         public bool CanExecute(object? parameter = null)
             => _canExecute?.Invoke(parameter) ?? true;
 
-        public CommandCondition Combine(params CommandCondition[] others)
+        public CommandPolicy Combine(params CommandPolicy[] others)
         {
             var funcs = new Func<object?, bool>[others.Length + 1];
             funcs[0] = _canExecute ?? (_ => true);
@@ -32,7 +32,7 @@ namespace Sachssoft.Sasofly.Pulse.Messaging
             for (int i = 0; i < others.Length; i++)
                 funcs[i + 1] = others[i]._canExecute ?? (_ => true);
 
-            return new CommandCondition(p =>
+            return new CommandPolicy(p =>
             {
                 for (int i = 0; i < funcs.Length; i++)
                     if (!funcs[i](p)) return false;
@@ -41,7 +41,7 @@ namespace Sachssoft.Sasofly.Pulse.Messaging
             });
         }
 
-        public CommandCondition Any(params CommandCondition[] others)
+        public CommandPolicy Any(params CommandPolicy[] others)
         {
             var funcs = new Func<object?, bool>[others.Length + 1];
             funcs[0] = _canExecute ?? (_ => false);
@@ -49,7 +49,7 @@ namespace Sachssoft.Sasofly.Pulse.Messaging
             for (int i = 0; i < others.Length; i++)
                 funcs[i + 1] = others[i]._canExecute ?? (_ => false);
 
-            return new CommandCondition(p =>
+            return new CommandPolicy(p =>
             {
                 for (int i = 0; i < funcs.Length; i++)
                     if (funcs[i](p)) return true;
@@ -58,16 +58,16 @@ namespace Sachssoft.Sasofly.Pulse.Messaging
             });
         }
 
-        public CommandCondition Invert()
+        public CommandPolicy Invert()
         {
             var func = _canExecute ?? (_ => true);
-            return new CommandCondition(p => !func(p));
+            return new CommandPolicy(p => !func(p));
         }
 
-        public static implicit operator CommandCondition(Func<object?, bool> func)
-            => new CommandCondition(func);
+        public static implicit operator CommandPolicy(Func<object?, bool> func)
+            => new CommandPolicy(func);
 
-        public static readonly CommandCondition Always = new CommandCondition(_ => true);
-        public static readonly CommandCondition Never = new CommandCondition(_ => false);
+        public static readonly CommandPolicy Always = new CommandPolicy(_ => true);
+        public static readonly CommandPolicy Never = new CommandPolicy(_ => false);
     }
 }

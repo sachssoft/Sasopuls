@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 
-namespace Sachssoft.Sasofly.Pulse.ViewModels
+namespace Sachssoft.Sasopuls.ViewModels
 {
     public sealed class ViewModelFactoryRegistry : IEnumerable<IViewModelFactory>
     {
@@ -49,7 +49,7 @@ namespace Sachssoft.Sasofly.Pulse.ViewModels
             return factory.Build(model);
         }
 
-        public ViewModelBase<TModel> Build<TModel>(TModel model) => Build(model);
+        public ModelViewModelBase<TModel> Build<TModel>(TModel model) => Build(model);
 
         public bool CanResolve(Type modelType)
         {

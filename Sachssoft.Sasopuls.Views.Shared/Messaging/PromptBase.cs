@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Sachssoft.Sasofly.Pulse.Messaging
+namespace Sachssoft.Sasopuls.Messaging
 {
     // Prompt<TInput, TOutput>
     // ======================

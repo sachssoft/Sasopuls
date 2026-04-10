@@ -3,7 +3,7 @@ using System.ComponentModel;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sachssoft.Sasofly.Pulse.Messaging
+namespace Sachssoft.Sasopuls.Messaging
 {
     /// <summary>
     /// Async Command – TaskCommand
@@ -60,12 +60,12 @@ namespace Sachssoft.Sasofly.Pulse.Messaging
         // Ohne Parameter
         public TaskCommand(
             Func<Task> executeAsync,
-            CommandCondition condition,
+            ICommandRule rule,
             bool canExecuteAlwaysIfNull = true,
             INotifyPropertyChanged? owner = null)
             : this(
                   executeAsync: (param) => executeAsync(),
-                  condition: condition,
+                  rule: rule,
                   canExecuteAlwaysIfNull: canExecuteAlwaysIfNull,
                   owner: owner
             )
@@ -74,12 +74,12 @@ namespace Sachssoft.Sasofly.Pulse.Messaging
         // Mit Parameter
         public TaskCommand(
             Func<object?, Task> executeAsync,
-            CommandCondition condition,
+            ICommandRule rule,
             bool canExecuteAlwaysIfNull = true,
             INotifyPropertyChanged? owner = null)
         {
             _executeAsync = executeAsync ?? throw new ArgumentNullException(nameof(executeAsync));
-            _canExecute = condition != null ? condition.CanExecute : throw new ArgumentNullException(nameof(condition));
+            _canExecute = rule != null ? rule.CanExecute : throw new ArgumentNullException(nameof(rule));
             CanExecuteAlwaysIfNull = canExecuteAlwaysIfNull;
 
             if (owner != null)

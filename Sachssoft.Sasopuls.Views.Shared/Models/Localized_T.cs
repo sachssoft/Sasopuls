@@ -2,9 +2,9 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 
-namespace Sachssoft.Sasofly.Pulse.Models
+namespace Sachssoft.Sasopuls.Models
 {
-    public record Localized<T>
+    public record Localized<T> : ILocalized
     {
         public Localized() { }
 
@@ -18,6 +18,8 @@ namespace Sachssoft.Sasofly.Pulse.Models
         public required string Key { get; init; }
 
         public T? Fallback { get; init; }
+
+        object? ILocalized.Fallback => Fallback;
 
         public override string ToString()
         {

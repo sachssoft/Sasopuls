@@ -5,7 +5,7 @@ using System.Runtime.CompilerServices;
 using System.Threading;
 using System.Threading.Tasks;
 
-namespace Sachssoft.Sasofly.Pulse
+namespace Sachssoft.Sasopuls
 {
     /// <summary>
     /// Base class for objects that track a "dirty" state.

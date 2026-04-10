@@ -1,8 +1,7 @@
 ﻿using Avalonia;
 using Avalonia.Controls;
-using Sachssoft.Sasofly.Pulse;
 
-namespace Sachssoft.Sasopuls.Avalonia.Controls
+namespace Sachssoft.Sasopuls.Views
 {
     public abstract class NotifyWindow<TViewModel> : Window
         where TViewModel : NotifyObject

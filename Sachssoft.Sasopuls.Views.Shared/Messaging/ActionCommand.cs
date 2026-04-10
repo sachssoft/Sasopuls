@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Windows.Input;
 
-namespace Sachssoft.Sasofly.Pulse.Messaging
+namespace Sachssoft.Sasopuls.Messaging
 {
     /// <summary>
     /// Sync Command – ActionCommand
@@ -49,20 +49,20 @@ namespace Sachssoft.Sasofly.Pulse.Messaging
         // Ohne Parameter
         public ActionCommand(
             Action execute,
-            CommandCondition condition)
+            ICommandRule rule)
             : this(
                  execute: (param) => execute(),
-                 condition: condition
+                 rule: rule
             )
         { }
 
         // Mit Parameter
         public ActionCommand(
             Action<object?> execute,
-            CommandCondition condition)
+            ICommandRule rule)
         {
             _execute = execute ?? throw new ArgumentNullException(nameof(execute));
-            _canExecute = condition != null ? condition.CanExecute : throw new ArgumentNullException(nameof(condition));
+            _canExecute = rule != null ? rule.CanExecute : throw new ArgumentNullException(nameof(rule));
         }
 
         public override bool CanExecute(object? parameter) => !IsRunning && (_canExecute?.Invoke(parameter) ?? true);
