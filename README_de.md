@@ -32,11 +32,11 @@ Sasodoc soll Entwicklern helfen:
 
 ## 📦 Unterstütze Formate
 
-| Format | Status         | Voraussetzungen | NuGet |
+| Platform | Status         | Voraussetzungen | NuGet |
 | ------ | -------------- | -------------------- | ----- |
 | Basis   | ✅ Verfügbar    | .NET 7.0				   | [![NuGet](https://img.shields.io/nuget/v/Sachssoft.Sasopuls)](https://www.nuget.org/packages/Sachssoft.Sasopuls)      |
 | Avalonia   | ✅ Verfügbar | .NET 7.0, Avalonia 11.0 | [![NuGet](https://img.shields.io/nuget/v/Sachssoft.Sasopuls.Avalonia)](https://www.nuget.org/packages/Sachssoft.Sasopuls.Avalonia)      |
-| WPF    | 🚧 In Planung |						 | |
+| WPF    | 🚧 In Planung |			-			 | - |
 
 ---
 

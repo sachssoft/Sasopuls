@@ -31,7 +31,7 @@ SasoMVVM is designed to help developers:
 
 ## 📦 Supported Formats
 
-| Format   | Status        | Requirements             | NuGet |
+| Platform | Status        | Requirements             | NuGet |
 |----------|--------------|--------------------------|--------|
 | Core     | ✅ Available  | .NET 7.0                | [![NuGet](https://img.shields.io/nuget/v/Sachssoft.Sasopuls)](https://www.nuget.org/packages/Sachssoft.Sasopuls) |
 | Avalonia | ✅ Available  | .NET 7.0, Avalonia 11.0 | [![NuGet](https://img.shields.io/nuget/v/Sachssoft.Sasopuls.Avalonia)](https://www.nuget.org/packages/Sachssoft.Sasopuls.Avalonia) |
