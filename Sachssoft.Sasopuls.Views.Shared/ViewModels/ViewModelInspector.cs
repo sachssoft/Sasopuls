@@ -1,13 +1,13 @@
-﻿using Sachssoft.Sasopuls.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
+using System.Linq;
 
 namespace Sachssoft.Sasopuls.ViewModels
 {
     public class ViewModelInspector
     {
         private readonly ViewModelBase _owner;
-        private readonly Dictionary<string, object> _properties = new();
+        private readonly Dictionary<string, IViewModelInspectorProperty> _properties = new();
 
         public ViewModelInspector(ViewModelBase owner)
         {
@@ -37,9 +37,26 @@ namespace Sachssoft.Sasopuls.ViewModels
             meta.PropertyType = typeof(T);
             meta.IsReadOnly = setter == null;
 
-            _properties[name] = CreateProperty<T>(getter, setter, meta);
+            _properties[name] = CreateProperty(getter, setter, meta);
 
             meta.OnInitialized();
+        }
+
+        public void AddProperty<T>(
+            string name,
+            Func<T?> getter)
+            => AddProperty(name, getter, null, null);
+
+        public void AddProperty(
+            string name,
+            Func<object?> getter,
+            Action<object?>? setter = null,
+            ViewModelInspectorPropertyMeta? meta = null)
+        {
+            if (getter is null)
+                throw new ArgumentNullException(nameof(getter));
+
+            AddProperty<object?>(name, getter, setter, meta);
         }
 
         protected virtual ViewModelInspectorProperty<T> CreateProperty<T>(
@@ -75,7 +92,11 @@ namespace Sachssoft.Sasopuls.ViewModels
             return false;
         }
 
+        public IEnumerable<IViewModelInspectorProperty> GetProperties()
+            => _properties.Values;
+
+        [Obsolete("Use GetProperties() instead. This member may be removed in a future version.")]
         public IEnumerable<KeyValuePair<string, object>> GetAll()
-            => _properties;
+            => _properties.Select(x => new KeyValuePair<string, object>(x.Key, x.Value));
     }
 }
