@@ -1,5 +1,4 @@
 ﻿using Sachssoft.Sasopuls.ViewModels;
-using System.ComponentModel;
 
 namespace Sachssoft.Sasopuls.Test
 {

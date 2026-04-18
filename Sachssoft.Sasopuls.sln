@@ -13,9 +13,15 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Sachssoft.Sasopuls.Avalonia
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Markdown", "Markdown", "{26E6E199-2F29-4120-89D5-EB9E47A61607}"
 	ProjectSection(SolutionItems) = preProject
+		CHANGELOG.md = CHANGELOG.md
 		LICENSE.md = LICENSE.md
 		README.md = README.md
 		README_de.md = README_de.md
+	EndProjectSection
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docu", "Docu", "{481BD992-09D0-415B-BB56-C336D39BF090}"
+	ProjectSection(SolutionItems) = preProject
+		CommandDispatcher.md = CommandDispatcher.md
 	EndProjectSection
 EndProject
 Global

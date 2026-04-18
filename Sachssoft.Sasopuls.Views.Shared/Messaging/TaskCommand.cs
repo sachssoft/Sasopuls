@@ -5,42 +5,33 @@ using System.Threading.Tasks;
 
 namespace Sachssoft.Sasopuls.Messaging
 {
-    /// <summary>
-    /// Async Command – TaskCommand
-    /// ===========================
-    /// Führt async Code aus, blockiert Re-Entrancy, optional CanExecute
-    /// </summary>
     public sealed class TaskCommand : CommandBase
     {
         private readonly Func<object?, Task> _executeAsync;
         private readonly Func<object?, bool>? _canExecute;
-        private int _isRunning; // 0 = false, 1 = true
+        private readonly ICommandRule? _rule;
 
-        /// <summary>
-        /// Wenn true und _canExecute == null, liefert CanExecute automatisch true
-        /// </summary>
+        private int _isRunning;
+
         public bool CanExecuteAlwaysIfNull { get; }
-
-        /// <summary>
-        /// Gibt an, ob der Command aktuell läuft
-        /// </summary>
         public bool IsRunning => _isRunning == 1;
 
-        // Ohne Parameter
+        // -------------------------
+        // Sync wrapper constructors
+        // -------------------------
+
         public TaskCommand(
             Func<Task> executeAsync,
             Func<bool>? canExecute = null,
             bool canExecuteAlwaysIfNull = true,
             INotifyPropertyChanged? owner = null)
             : this(
-                  executeAsync: (param) => executeAsync(),
-                  canExecute: canExecute != null ? ((param) => canExecute()) : null,
-                  canExecuteAlwaysIfNull: canExecuteAlwaysIfNull,
-                  owner: owner
-            )
+                executeAsync: (param) => executeAsync(),
+                canExecute: canExecute != null ? ((param) => canExecute()) : null,
+                canExecuteAlwaysIfNull: canExecuteAlwaysIfNull,
+                owner: owner)
         { }
 
-        // Mit Parameter
         public TaskCommand(
             Func<object?, Task> executeAsync,
             Func<object?, bool>? canExecute = null,
@@ -52,26 +43,25 @@ namespace Sachssoft.Sasopuls.Messaging
             CanExecuteAlwaysIfNull = canExecuteAlwaysIfNull;
 
             if (owner != null)
-            {
                 owner.PropertyChanged += (_, __) => RaiseCanExecuteChanged();
-            }
         }
 
-        // Ohne Parameter
+        // -------------------------
+        // Rule-based constructors (FIXED)
+        // -------------------------
+
         public TaskCommand(
             Func<Task> executeAsync,
             ICommandRule rule,
             bool canExecuteAlwaysIfNull = true,
             INotifyPropertyChanged? owner = null)
             : this(
-                  executeAsync: (param) => executeAsync(),
-                  rule: rule,
-                  canExecuteAlwaysIfNull: canExecuteAlwaysIfNull,
-                  owner: owner
-            )
+                executeAsync: (param) => executeAsync(),
+                rule: rule,
+                canExecuteAlwaysIfNull: canExecuteAlwaysIfNull,
+                owner: owner)
         { }
 
-        // Mit Parameter
         public TaskCommand(
             Func<object?, Task> executeAsync,
             ICommandRule rule,
@@ -79,41 +69,47 @@ namespace Sachssoft.Sasopuls.Messaging
             INotifyPropertyChanged? owner = null)
         {
             _executeAsync = executeAsync ?? throw new ArgumentNullException(nameof(executeAsync));
-            _canExecute = rule != null ? rule.CanExecute : throw new ArgumentNullException(nameof(rule));
+            _rule = rule ?? throw new ArgumentNullException(nameof(rule));
+
+            _canExecute = rule.CanExecute;
             CanExecuteAlwaysIfNull = canExecuteAlwaysIfNull;
 
+            // 🔥 reactive binding (Rule → Command)
+            _rule.CanExecuteChanged += OnRuleChanged;
+
             if (owner != null)
-            {
                 owner.PropertyChanged += (_, __) => RaiseCanExecuteChanged();
-            }
         }
 
-        /// <summary>
-        /// Prüft, ob der Command ausführbar ist
-        /// </summary>
+        // -------------------------
+        // Rule event handler
+        // -------------------------
+
+        private void OnRuleChanged(object? sender, EventArgs e)
+        {
+            RaiseCanExecuteChanged();
+        }
+
+        // -------------------------
+        // Execution logic
+        // -------------------------
+
         public override bool CanExecute(object? parameter)
         {
             if (_canExecute == null && CanExecuteAlwaysIfNull)
                 return true;
 
             if (_canExecute == null)
-                return true; // Standard fallback
+                return true;
 
-            // Command blockiert während Ausführung
             return !IsRunning && _canExecute(parameter);
         }
 
-        /// <summary>
-        /// ICommand-Interface (async void hier korrekt)
-        /// </summary>
         public override async void Execute(object? parameter)
         {
             await ExecuteAsync(parameter).ConfigureAwait(false);
         }
 
-        /// <summary>
-        /// Async-Variante von Execute
-        /// </summary>
         public async Task ExecuteAsync(object? parameter)
         {
             if (!CanExecute(parameter))
@@ -122,15 +118,22 @@ namespace Sachssoft.Sasopuls.Messaging
             Interlocked.Exchange(ref _isRunning, 1);
             RaiseCanExecuteChanged();
 
-            await _executeAsync(parameter).ConfigureAwait(true); // UI-Kontext beibehalten
-
-            Interlocked.Exchange(ref _isRunning, 0);
-            RaiseCanExecuteChanged();
+            try
+            {
+                await _executeAsync(parameter).ConfigureAwait(true);
+            }
+            finally
+            {
+                Interlocked.Exchange(ref _isRunning, 0);
+                RaiseCanExecuteChanged();
+            }
         }
 
-        /// <summary>
-        /// Manuelles Refresh für CanExecute
-        /// </summary>
-        public void RefreshCanExecute() => RaiseCanExecuteChanged();
+        // -------------------------
+        // Manual refresh
+        // -------------------------
+
+        public void RefreshCanExecute()
+            => RaiseCanExecuteChanged();
     }
 }
