@@ -1,8 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace Sachssoft.Sasopuls.ViewModels
+﻿namespace Sachssoft.Sasopuls.ViewModels
 {
     public interface IViewModelInspectorProperty
     {

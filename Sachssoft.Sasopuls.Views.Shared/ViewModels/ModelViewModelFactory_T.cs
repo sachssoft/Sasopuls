@@ -6,18 +6,21 @@ namespace Sachssoft.Sasopuls.ViewModels
     /// <summary>
     /// Factory for creating ViewModels and optionally providing their underlying Models.
     /// </summary>
-    public sealed class ModelViewModelFactory<TModel> : IViewModelFactory
+    public sealed class ModelViewModelFactory<TModel> : IViewModelFactory, IViewModelFactoryContextProvider
         where TModel : class
     {
         private readonly Func<TModel, ModelViewModelBase<TModel>> _viewModelFactory;
         private readonly TModel? _model;
+        private readonly IViewModelFactoryContext? _context;
 
         private ModelViewModelFactory(
             Func<TModel, ModelViewModelBase<TModel>> viewModelFactory,
             Func<TModel>? modelFactory = null,
-            TModel? sourceModel = null)
+            TModel? sourceModel = null,
+            IViewModelFactoryContext? context = null)
         {
             _viewModelFactory = viewModelFactory ?? throw new ArgumentNullException(nameof(viewModelFactory));
+            _context = context;
 
             if (modelFactory != null)
             {
@@ -31,9 +34,16 @@ namespace Sachssoft.Sasopuls.ViewModels
 
         public Type ModelType { get; } = typeof(TModel);
 
+        public IViewModelFactoryContext? Context => _context;
+
         public static ModelViewModelFactory<TModel> Create(Func<TModel, ModelViewModelBase<TModel>> viewModelFactory)
         {
             return new ModelViewModelFactory<TModel>(viewModelFactory);
+        }
+
+        public static ModelViewModelFactory<TModel> Create(Func<TModel, ModelViewModelBase<TModel>> viewModelFactory, IViewModelFactoryContext? context)
+        {
+            return new ModelViewModelFactory<TModel>(viewModelFactory, context: context);
         }
 
         public static ModelViewModelFactory<TModel> Create(Func<TModel, ModelViewModelBase<TModel>> viewModelFactory,
@@ -43,9 +53,21 @@ namespace Sachssoft.Sasopuls.ViewModels
         }
 
         public static ModelViewModelFactory<TModel> Create(Func<TModel, ModelViewModelBase<TModel>> viewModelFactory,
+                                                      Func<TModel> modelFactory, IViewModelFactoryContext? context)
+        {
+            return new ModelViewModelFactory<TModel>(viewModelFactory, modelFactory: modelFactory, context: context);
+        }
+
+        public static ModelViewModelFactory<TModel> Create(Func<TModel, ModelViewModelBase<TModel>> viewModelFactory,
                                                           TModel sourceModel)
         {
             return new ModelViewModelFactory<TModel>(viewModelFactory, sourceModel: sourceModel);
+        }
+
+        public static ModelViewModelFactory<TModel> Create(Func<TModel, ModelViewModelBase<TModel>> viewModelFactory,
+                                                          TModel sourceModel, IViewModelFactoryContext? context)
+        {
+            return new ModelViewModelFactory<TModel>(viewModelFactory, sourceModel: sourceModel, context: context);
         }
 
         public ModelViewModelBase<TModel> Build(TModel model)

@@ -33,6 +33,8 @@
     <Compile Include="$(MSBuildThisFileDirectory)Models\Result_T.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ITrackableViewModel.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelFactory.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelFactoryContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelFactoryContextProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelInspectorProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelPropertyHandle.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelPropertyMeta.cs" />

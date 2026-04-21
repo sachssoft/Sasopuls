@@ -1,8 +1,9 @@
 # Version History
 
-## Version 1.1.1 - 2026-04-xx (Planned)
+## Version 1.1.1 - 2026-04-21
 
 - [Improvement] Minor fixes and stability improvements in ViewModelInspector
+- [Feature] ViewModelFactoryContext introduced for optional factory context support
 
 ---
 
