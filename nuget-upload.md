@@ -1,0 +1,1 @@
+dotnet nuget push "YOUR_FILE_PATH.nupkg" -k YOUR_API_KEY -s https://api.nuget.org/v3/index.json
