@@ -24,6 +24,11 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Docu", "Docu", "{481BD992-0
 		CommandDispatcher.md = CommandDispatcher.md
 	EndProjectSection
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Projektmappenelemente", "Projektmappenelemente", "{2F95A746-9439-489E-9D4B-E33843F17FD0}"
+	ProjectSection(SolutionItems) = preProject
+		nuget-upload.md = nuget-upload.md
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
