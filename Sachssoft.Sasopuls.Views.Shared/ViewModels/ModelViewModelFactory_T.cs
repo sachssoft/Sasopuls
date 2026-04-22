@@ -6,10 +6,12 @@ namespace Sachssoft.Sasopuls.ViewModels
     /// <summary>
     /// Factory for creating ViewModels and optionally providing their underlying Models.
     /// </summary>
-    public sealed class ModelViewModelFactory<TModel> : IViewModelFactory, IViewModelFactoryContextProvider
+    public sealed class ModelViewModelFactory<TModel> :
+        IViewModelFactory, IViewModelFactoryContextProvider, IViewModelTypeProvider, IViewModelCreator
         where TModel : class
     {
         private readonly Func<TModel, ModelViewModelBase<TModel>> _viewModelFactory;
+        private readonly Func<TModel>? _modelFactory;
         private readonly TModel? _model;
         private readonly IViewModelFactoryContext? _context;
 
@@ -20,11 +22,12 @@ namespace Sachssoft.Sasopuls.ViewModels
             IViewModelFactoryContext? context = null)
         {
             _viewModelFactory = viewModelFactory ?? throw new ArgumentNullException(nameof(viewModelFactory));
+            _modelFactory = modelFactory;
             _context = context;
 
-            if (modelFactory != null)
+            if (_modelFactory != null)
             {
-                _model = modelFactory();
+                _model = _modelFactory();
             }
             else
             {
@@ -33,6 +36,8 @@ namespace Sachssoft.Sasopuls.ViewModels
         }
 
         public Type ModelType { get; } = typeof(TModel);
+
+        public Type ViewModelType { get; } = typeof(ModelViewModelBase<TModel>);
 
         public IViewModelFactoryContext? Context => _context;
 
@@ -70,6 +75,32 @@ namespace Sachssoft.Sasopuls.ViewModels
             return new ModelViewModelFactory<TModel>(viewModelFactory, sourceModel: sourceModel, context: context);
         }
 
+        // Version 1.1.2
+        public ModelViewModelBase<TModel> CreateFromModel()
+        {
+            if (_model is null)
+                throw new InvalidOperationException(
+                    "No stored model is available. Ensure a model was provided during factory creation.");
+
+            return _viewModelFactory(_model);
+        }
+
+        // Version 1.1.2
+        public ModelViewModelBase<TModel> CreateViewModel()
+        {
+            if (_modelFactory is null)
+                throw new InvalidOperationException(
+                    $"{nameof(ModelViewModelFactory<TModel>)} cannot create a ViewModel because no model factory was provided. " +
+                    "Use a factory overload that provides a model factory.");
+
+            var model = _modelFactory();
+
+            return _viewModelFactory(model);
+        }
+
+        // Version 1.1.2
+        ViewModelBase IViewModelCreator.CreateViewModel() => CreateViewModel();
+
         public ModelViewModelBase<TModel> Build(TModel model)
         {
             if (model is null)
@@ -78,6 +109,7 @@ namespace Sachssoft.Sasopuls.ViewModels
             return _viewModelFactory(model);
         }
 
+        // Gibt das bereitgestellte oder intern gespeicherte Model zurück, falls vorhanden.
         public TModel? ProvideModel() => _model;
 
         ViewModelBase IViewModelFactory.Build(object? model)

@@ -16,6 +16,9 @@ namespace Sachssoft.Sasopuls.ViewModels
 
         public ViewModelBase Owner => _owner;
 
+        // version 1.2.0:
+        // add schema (IINspectorSchema)
+
         public void AddProperty<T>(
             string name,
             Func<T?> getter,

@@ -34,6 +34,49 @@ namespace Sachssoft.Sasopuls.ViewModels
 
         public IEnumerable<IViewModelFactory> AvailableFactories => _factories.Values;
 
+        // 1.1.2
+        public bool TryCreateInstance(Type viewModelType, object? model, out ViewModelBase? viewModel)
+        {
+            if (viewModelType is null)
+                throw new ArgumentNullException(nameof(viewModelType));
+
+            foreach (var factory in _factories.Values)
+            {
+                if (factory is IViewModelTypeProvider provider &&
+                    provider.ViewModelType == viewModelType)
+                {
+                    viewModel = factory.Build(model);
+                    return true;
+                }
+            }
+
+            viewModel = null;
+            return false;
+        }
+
+        // 1.1.2
+        public bool TryCreateInstance(Type viewModelType, out ViewModelBase? viewModel)
+        {
+            return TryCreateInstance(viewModelType, null, out viewModel);
+        }
+
+        // 1.1.2
+        public bool TryCreateInstance<TViewModel>(out ViewModelBase? viewModel)
+            where TViewModel : ViewModelBase
+        {
+            return TryCreateInstance(typeof(TViewModel), null, out viewModel);
+        }
+
+        // 1.1.2
+        public bool TryCreateInstance<TViewModel>(object? model, out ViewModelBase? viewModel)
+            where TViewModel : ViewModelBase
+        {
+            return TryCreateInstance(typeof(TViewModel), model, out viewModel);
+        }
+
+        // Baut ein ViewModel anhand des übergebenen Models.  
+        // Sucht eine passende Factory über den ModelType (inkl. Vererbung via IsAssignableFrom).  
+        // Wirft eine Exception, wenn keine passende Factory registriert ist.
         public ViewModelBase Build(object model)
         {
             if (model is null)
@@ -41,11 +84,16 @@ namespace Sachssoft.Sasopuls.ViewModels
 
             var modelType = model.GetType();
 
-            if (!_factories.TryGetValue(modelType, out var factory))
-                throw new InvalidOperationException(
-                    $"No factory registered for model type {modelType.Name}");
+            foreach (var factory in _factories.Values)
+            {
+                if (factory.ModelType.IsAssignableFrom(modelType))
+                {
+                    return factory.Build(model);
+                }
+            }
 
-            return factory.Build(model);
+            throw new InvalidOperationException(
+                $"No factory registered for model type {modelType.Name}");
         }
 
         public ModelViewModelBase<TModel> Build<TModel>(TModel model) => Build(model);

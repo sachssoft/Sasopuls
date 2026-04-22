@@ -1,5 +1,14 @@
 # Version History
 
+## Version 1.1.2 - 2026-04-22
+- [Improvement] Improved ViewModel resolution logic including type matching and inheritance handling
+- [Improvement] Improved error handling and exception messages during factory resolution
+- [Addition] Extended ViewModel creation API in `ViewModelFactoryRegistry` with missing instance creation methods
+- [Addition] Extended `ModelViewModelFactory` to support creating ViewModels without requiring a mandatory model parameter  
+- [Addition] Introduced additional interfaces to avoid breaking changes to `IViewModelFactory`, ensuring backward compatibility  
+
+---
+
 ## Version 1.1.1 - 2026-04-21
 
 - [Improvement] Minor fixes and stability improvements in ViewModelInspector
