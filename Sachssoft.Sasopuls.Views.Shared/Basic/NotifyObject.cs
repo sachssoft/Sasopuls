@@ -15,8 +15,8 @@ namespace Sachssoft.Sasopuls
     public class NotifyObject : IDisposable, INotifyPropertyChanged, INotifyPropertyChanging
     {
         private readonly List<NotifyObject> _childDirtyObjects = new();
-        private bool _dirty;
-        private bool _freeze;
+        private bool _isDirty;
+        private bool _isFrozen;
 
         private readonly object _delayLock = new();
         private int _delayCount;
@@ -30,35 +30,55 @@ namespace Sachssoft.Sasopuls
 
         #region Dirty State
 
-        /// <summary>Indicates whether the object or its children have been modified.</summary>
+        // 1.1.3
+        [Obsolete("Use IsDirty instead. Dirty is deprecated but kept for backward compatibility.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool Dirty
         {
-            get => _dirty;
+            get => IsDirty;
+            protected set => IsDirty = value;
+        }
+
+        /// <summary>Indicates whether the object or its children have been modified.</summary>
+        public bool IsDirty
+        {
+            get => _isDirty;
             protected set
             {
-                if (_dirty != value)
+                if (_isDirty != value)
                 {
-                    _dirty = value;
-                    if (!_freeze)
+                    _isDirty = value;
+                    if (!_isFrozen)
                     {
-                        if (_dirty)
+                        if (_isDirty)
                             DirtyActivated?.Invoke(this, EventArgs.Empty);
                         RaisePropertyChanged(nameof(Dirty));
+                        RaisePropertyChanged(nameof(IsDirty));
                     }
                 }
             }
         }
 
-        /// <summary>Indicates whether notifications are currently frozen.</summary>
+        // 1.1.3
+        [Obsolete("Use IsFrozen instead. Freeze is deprecated but kept for backward compatibility.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public bool Freeze
         {
-            get => _freeze;
+            get => IsFrozen;
+            set => IsFrozen = value;
+        }
+
+        /// <summary>Indicates whether notifications are currently frozen.</summary>
+        public bool IsFrozen
+        {
+            get => _isFrozen;
             set
             {
-                if (_freeze != value)
+                if (_isFrozen != value)
                 {
-                    _freeze = value;
+                    _isFrozen = value;
                     RaisePropertyChanged(nameof(Freeze));
+                    RaisePropertyChanged(nameof(IsFrozen));
                 }
             }
         }
@@ -336,7 +356,7 @@ namespace Sachssoft.Sasopuls
         // Protected, damit abgeleitete Klassen direkt Benachrichtigungen feuern können
         protected void RaisePropertyChanged(string propertyName)
         {
-            if (_freeze) return;
+            if (_isFrozen) return;
 
             lock (_delayLock)
             {
@@ -371,7 +391,7 @@ namespace Sachssoft.Sasopuls
         // Protected, feuert PropertyChanging
         protected void RaisePropertyChanging(string propertyName)
         {
-            if (_freeze) return;
+            if (_isFrozen) return;
             OnPropertyChanging(new PropertyChangingEventArgs(propertyName));
         }
 

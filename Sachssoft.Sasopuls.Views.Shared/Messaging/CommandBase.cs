@@ -1,9 +1,10 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Windows.Input;
 
 namespace Sachssoft.Sasopuls.Messaging
 {
-    public abstract class CommandBase : ICommand
+    public abstract class CommandBase : ICommand, IInvalidateable
     {
         public event EventHandler? CanExecuteChanged;
 
@@ -11,6 +12,13 @@ namespace Sachssoft.Sasopuls.Messaging
 
         public abstract void Execute(object? parameter);
 
+        public void Invalidate()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        [Obsolete("Use Invalidate() instead.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
         public void RaiseCanExecuteChanged() => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
     }
 }

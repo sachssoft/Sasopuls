@@ -1,9 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Sachssoft.Sasopuls.Messaging
 {
-    public sealed class CommandPolicy : ICommandRule
+    public sealed class CommandPolicy : ICommandRule, IInvalidateable
     {
         private readonly Func<object?, bool>? _canExecute;
         private readonly CommandDispatcher? _dispatcher;
@@ -29,6 +30,19 @@ namespace Sachssoft.Sasopuls.Messaging
         public event EventHandler? CanExecuteChanged;
 
         // -------------------------
+        // Notify
+        // -------------------------
+        public void Invalidate()
+        {
+            CanExecuteChanged?.Invoke(this, EventArgs.Empty);
+        }
+
+        [Obsolete("Use Invalidate() instead.")]
+        [EditorBrowsable(EditorBrowsableState.Never)]
+        public void RaiseCanExecuteChanged()
+            => Invalidate();
+
+        // -------------------------
         // Core evaluation
         // -------------------------
         public bool CanExecute(object? parameter = null)
@@ -37,11 +51,9 @@ namespace Sachssoft.Sasopuls.Messaging
         // -------------------------
         // Event handling
         // -------------------------
-        public void RaiseCanExecuteChanged()
-            => CanExecuteChanged?.Invoke(this, EventArgs.Empty);
 
         private void OnSourceChanged(object? sender, EventArgs e)
-            => RaiseCanExecuteChanged();
+            => Invalidate();
 
         // -------------------------
         // Dispatcher hook (optional)

@@ -77,7 +77,28 @@ namespace Sachssoft.Sasopuls.ViewModels
         // Baut ein ViewModel anhand des übergebenen Models.  
         // Sucht eine passende Factory über den ModelType (inkl. Vererbung via IsAssignableFrom).  
         // Wirft eine Exception, wenn keine passende Factory registriert ist.
-        public ViewModelBase Build(object model)
+        public ViewModelBase Build(object model) => BuildInternal(model); // 1.1.3
+
+        public ModelViewModelBase<TModel> Build<TModel>(TModel model) => (ModelViewModelBase<TModel>)BuildInternal(
+            model ?? throw new ArgumentNullException(nameof(model))
+        ); // Bug-Fix, 1.1.3
+
+        public bool CanResolve(Type modelType)
+        {
+            if (modelType is null)
+                throw new ArgumentNullException(nameof(modelType));
+
+            return _factories.ContainsKey(modelType);
+        }
+
+        public bool CanResolve<TModel>() => CanResolve(typeof(TModel));
+
+        IEnumerator<IViewModelFactory> IEnumerable<IViewModelFactory>.GetEnumerator() => _factories.Values.GetEnumerator();
+
+        IEnumerator IEnumerable.GetEnumerator() => _factories.Values.GetEnumerator();
+
+        // Bug-Fix!
+        private ViewModelBase BuildInternal(object model)
         {
             if (model is null)
                 throw new ArgumentNullException(nameof(model));
@@ -95,21 +116,5 @@ namespace Sachssoft.Sasopuls.ViewModels
             throw new InvalidOperationException(
                 $"No factory registered for model type {modelType.Name}");
         }
-
-        public ModelViewModelBase<TModel> Build<TModel>(TModel model) => Build(model);
-
-        public bool CanResolve(Type modelType)
-        {
-            if (modelType is null)
-                throw new ArgumentNullException(nameof(modelType));
-
-            return _factories.ContainsKey(modelType);
-        }
-
-        public bool CanResolve<TModel>() => CanResolve(typeof(TModel));
-
-        IEnumerator<IViewModelFactory> IEnumerable<IViewModelFactory>.GetEnumerator() => _factories.Values.GetEnumerator();
-
-        IEnumerator IEnumerable.GetEnumerator() => _factories.Values.GetEnumerator();
     }
 }

@@ -1,4 +1,8 @@
-# Version History
+# Version 1.1.3 - 2026-05-01
+- [Improvement] Added `IsDirty` and `IsFrozen` to align with .NET naming conventions.
+- [Improvement] Updated `NotifyObject` to introduce `IsDirty` and `IsFrozen` while keeping `Dirty` and `Freeze` for backward compatibility.
+- [Addition] Added `IInvalidatable` support and introduced `Invalidate()` as the preferred invalidation mechanism.
+- [Bug] `ViewModelFactoryRegistry.Build` caused infinite recursion due to overload ambiguity.
 
 ## Version 1.1.2 - 2026-04-22
 - [Improvement] Improved ViewModel resolution logic including type matching and inheritance handling

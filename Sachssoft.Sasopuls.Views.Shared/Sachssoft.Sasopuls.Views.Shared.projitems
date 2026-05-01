@@ -18,6 +18,7 @@
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\CommandPolicy.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)messaging\ICommandRule.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\CommandDispatcher.cs" />
+    <Compile Include="..\Sachssoft.Sasopuls.Views.Shared\messaging\IInvalidateable.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\Prompt.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PromptBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\PromptIn.cs" />
