@@ -1,3 +1,6 @@
+# Version 2.0.0-beta - 2026-05-
+- 
+
 # Version 1.1.3 - 2026-05-01
 - [Improvement] Added `IsDirty` and `IsFrozen` to align with .NET naming conventions.
 - [Improvement] Updated `NotifyObject` to introduce `IsDirty` and `IsFrozen` while keeping `Dirty` and `Freeze` for backward compatibility.
