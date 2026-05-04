@@ -1,5 +1,8 @@
-# Version 2.0.0-alpha - 2026-05-
-- 
+# Version 2.0.0-alpha.1 - 2026-05-
+- [Improvement] Refactored property change handling and internal event pipeline
+- [Feature] Added PropertyChangeContext parameter to all notify methods
+- [Feature] Introduced PropertyChangeContext supporting filtering via Filters
+- [Bug] Fixed cast error in `ViewModelFactoryRegistry.Build` Cast Error .
 
 # Version 1.1.3 - 2026-05-01
 - [Improvement] Added `IsDirty` and `IsFrozen` to align with .NET naming conventions.
