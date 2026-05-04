@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Sachssoft.Sasopuls.Basic;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -12,8 +13,11 @@ namespace Sachssoft.Sasopuls
     /// Supports delayed notifications, freeze/unfreeze,
     /// child dirty propagation, and AOT/trimming friendly.
     /// </summary>
-    public class NotifyObject : IDisposable, INotifyPropertyChanged, INotifyPropertyChanging
+    public class NotifyObject : IDisposable, INotifyPropertyChangedContext, INotifyPropertyChangingContext
     {
+        private event PropertyChangedEventHandler? _propertyChangedBridge;
+        private event PropertyChangingEventHandler? _propertyChangingBridge;
+
         private readonly List<NotifyObject> _childDirtyObjects = new();
         private bool _isDirty;
         private bool _isFrozen;
@@ -25,19 +29,62 @@ namespace Sachssoft.Sasopuls
         private int _delayMilliseconds = 100; // Standard-Verzögerung
 
         public event EventHandler? DirtyActivated;
-        public event PropertyChangedEventHandler? PropertyChanged;
-        public event PropertyChangingEventHandler? PropertyChanging;
+
+        public event EventHandler<PropertyChangingContextEventArgs>? PropertyChanging;
+        public event EventHandler<PropertyChangedContextEventArgs>? PropertyChanged;
+
+        #region Event Bridge
+
+        private void OnPropertyChangedContext(object? sender, PropertyChangedContextEventArgs e)
+        {
+            _propertyChangedBridge?.Invoke(sender, new PropertyChangedEventArgs(e.PropertyName));
+        }
+
+        private void OnPropertyChangingContext(object? sender, PropertyChangingContextEventArgs e)
+        {
+            _propertyChangingBridge?.Invoke(sender, new PropertyChangingEventArgs(e.PropertyName));
+        }
+
+        // === INotifyPropertyChanged ===
+        event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged
+        {
+            add
+            {
+                if (_propertyChangedBridge == null)
+                    PropertyChanged += OnPropertyChangedContext;
+
+                _propertyChangedBridge += value;
+            }
+            remove
+            {
+                _propertyChangedBridge -= value;
+
+                if (_propertyChangedBridge == null)
+                    PropertyChanged -= OnPropertyChangedContext;
+            }
+        }
+
+        // === INotifyPropertyChanging ===
+        event PropertyChangingEventHandler? INotifyPropertyChanging.PropertyChanging
+        {
+            add
+            {
+                if (_propertyChangingBridge == null)
+                    PropertyChanging += OnPropertyChangingContext;
+
+                _propertyChangingBridge += value;
+            }
+            remove
+            {
+                _propertyChangingBridge -= value;
+
+                if (_propertyChangingBridge == null)
+                    PropertyChanging -= OnPropertyChangingContext;
+            }
+        }
+        #endregion
 
         #region Dirty State
-
-        // 1.1.3
-        [Obsolete("Use IsDirty instead. Dirty is deprecated but kept for backward compatibility.")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public bool Dirty
-        {
-            get => IsDirty;
-            protected set => IsDirty = value;
-        }
 
         /// <summary>Indicates whether the object or its children have been modified.</summary>
         public bool IsDirty
@@ -52,20 +99,10 @@ namespace Sachssoft.Sasopuls
                     {
                         if (_isDirty)
                             DirtyActivated?.Invoke(this, EventArgs.Empty);
-                        RaisePropertyChanged(nameof(Dirty));
                         RaisePropertyChanged(nameof(IsDirty));
                     }
                 }
             }
-        }
-
-        // 1.1.3
-        [Obsolete("Use IsFrozen instead. Freeze is deprecated but kept for backward compatibility.")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public bool Freeze
-        {
-            get => IsFrozen;
-            set => IsFrozen = value;
         }
 
         /// <summary>Indicates whether notifications are currently frozen.</summary>
@@ -77,27 +114,26 @@ namespace Sachssoft.Sasopuls
                 if (_isFrozen != value)
                 {
                     _isFrozen = value;
-                    RaisePropertyChanged(nameof(Freeze));
                     RaisePropertyChanged(nameof(IsFrozen));
                 }
             }
         }
 
         /// <summary>Marks the object as dirty.</summary>
-        public void MarkDirty() => Dirty = true;
+        public void MarkDirty() => IsDirty = true;
 
         /// <summary>Resets the dirty state of this object and all registered child objects.</summary>
         public void ResetDirty()
         {
-            var wasFrozen = Freeze;
-            Freeze = true;
+            var wasFrozen = IsFrozen;
+            IsFrozen = true;
 
-            Dirty = false;
+            IsDirty = false;
 
             foreach (var child in _childDirtyObjects)
                 child.ResetDirty();
 
-            Freeze = wasFrozen;
+            IsFrozen = wasFrozen;
             OnDirtyReset();
         }
 
@@ -135,6 +171,7 @@ namespace Sachssoft.Sasopuls
             IPropertyStore? store,
             T? fallback = default,
             NullStoreBehavior nullStoreBehavior = NullStoreBehavior.Ignore,
+            PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = ""
         )
         {
@@ -150,8 +187,8 @@ namespace Sachssoft.Sasopuls
 
                     case NullStoreBehavior.NotifyOnly:
                         // Nur Events feuern, Value gibt es nicht → fallback
-                        RaisePropertyChanging(propertyName);
-                        RaisePropertyChanged(propertyName);
+                        RaisePropertyChanging(propertyName, context);
+                        RaisePropertyChanged(propertyName, context);
                         return fallback;
 
                     default:
@@ -167,24 +204,33 @@ namespace Sachssoft.Sasopuls
         // ---------------------------
 
         // Setzt ein Feld, feuert PropertyChanged und markiert Dirty
-        protected void SetAndMarkDirty<T>(ref T? field, T? value, [CallerMemberName] string propertyName = "")
+        protected void SetAndMarkDirty<T>(
+            ref T? field, 
+            T? value, 
+            PropertyChangeContext? context = null, 
+            [CallerMemberName] string propertyName = "")
         {
             if (!EqualityComparer<T?>.Default.Equals(field, value))
             {
                 field = value;
-                RaisePropertyChanged(propertyName);
+                RaisePropertyChanged(propertyName, context);
                 MarkDirty();
             }
         }
 
         // Setzt ein Feld, feuert PropertyChanged und markiert Dirty
         // Speziell für Model Property (MVVM)
-        protected void SetAndMarkDirty<T>(Func<T?> getter, Action<T?> setter, T? value, [CallerMemberName] string propertyName = "")
+        protected void SetAndMarkDirty<T>(
+            Func<T?> getter, 
+            Action<T?> setter, 
+            T? value, 
+            PropertyChangeContext? context = null, 
+            [CallerMemberName] string propertyName = "")
         {
             if (!EqualityComparer<T?>.Default.Equals(getter(), value))
             {
                 setter(value);
-                RaisePropertyChanged(propertyName);
+                RaisePropertyChanged(propertyName, context);
                 MarkDirty();
             }
         }
@@ -196,6 +242,7 @@ namespace Sachssoft.Sasopuls
             T? value,
             T? fallback = default,
             NullStoreBehavior nullStoreBehavior = NullStoreBehavior.ThrowException,
+            PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = ""
         )
         {
@@ -210,7 +257,7 @@ namespace Sachssoft.Sasopuls
                         throw new ArgumentNullException(nameof(store), $"Store cannot be null for property {propertyName}");
 
                     case NullStoreBehavior.NotifyOnly:
-                        RaisePropertyChanged(propertyName);
+                        RaisePropertyChanged(propertyName, context);
                         MarkDirty();
                         return;
 
@@ -222,31 +269,40 @@ namespace Sachssoft.Sasopuls
             if (!EqualityComparer<T?>.Default.Equals(store.Get(propertyName, fallback), value))
             {
                 store.Set(propertyName, value);
-                RaisePropertyChanged(propertyName);
+                RaisePropertyChanged(propertyName, context);
                 MarkDirty();
             }
         }
 
         // Setzt ein Feld, feuert PropertyChanging und PropertyChanged
-        protected bool SetAndNotify<T>(ref T? field, T? value, [CallerMemberName] string propertyName = "")
+        protected bool SetAndNotify<T>(
+            ref T? field, 
+            T? value, 
+            PropertyChangeContext? context = null,
+            [CallerMemberName] string propertyName = "")
         {
             if (EqualityComparer<T?>.Default.Equals(field, value)) return false;
 
-            RaisePropertyChanging(propertyName);
+            RaisePropertyChanging(propertyName, context);
             field = value;
-            RaisePropertyChanged(propertyName);
+            RaisePropertyChanged(propertyName, context);
             return true;
         }
 
         // Setzt ein Feld, feuert PropertyChanging und PropertyChanged
         // Speziell für Model Property (MVVM)
-        protected bool SetAndNotify<T>(Func<T?> getter, Action<T?> setter, T? value, [CallerMemberName] string propertyName = "")
+        protected bool SetAndNotify<T>(
+            Func<T?> getter, 
+            Action<T?> setter, 
+            T? value, 
+            PropertyChangeContext? context = null,
+            [CallerMemberName] string propertyName = "")
         {
             if (EqualityComparer<T?>.Default.Equals(getter(), value)) return false;
 
-            RaisePropertyChanging(propertyName);
+            RaisePropertyChanging(propertyName, context);
             setter(value);
-            RaisePropertyChanged(propertyName);
+            RaisePropertyChanged(propertyName, context);
             return true;
         }
 
@@ -257,6 +313,7 @@ namespace Sachssoft.Sasopuls
             T? value,
             T? fallback = default,
             NullStoreBehavior nullStoreBehavior = NullStoreBehavior.ThrowException,
+            PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = "")
         {
             if (store == null)
@@ -270,8 +327,8 @@ namespace Sachssoft.Sasopuls
                         throw new ArgumentNullException(nameof(store), $"Store cannot be null for property {propertyName}");
 
                     case NullStoreBehavior.NotifyOnly:
-                        RaisePropertyChanging(propertyName);
-                        RaisePropertyChanged(propertyName);
+                        RaisePropertyChanging(propertyName, context);
+                        RaisePropertyChanged(propertyName, context);
                         return true;
 
                     default:
@@ -282,27 +339,35 @@ namespace Sachssoft.Sasopuls
             if (EqualityComparer<T?>.Default.Equals(store.Get(propertyName, fallback), value))
                 return false;
 
-            RaisePropertyChanging(propertyName);
+            RaisePropertyChanging(propertyName, context);
             store.Set(propertyName, value);
-            RaisePropertyChanged(propertyName);
+            RaisePropertyChanged(propertyName, context);
             return true;
         }
 
         // Setzt ein Feld direkt ohne Dirty, feuert nur Events
-        protected void SetDirectly<T>(ref T? field, T? value, [CallerMemberName] string propertyName = "")
+        protected void SetDirectly<T>(
+            ref T? field, 
+            T? value, 
+            PropertyChangeContext? context = null, 
+            [CallerMemberName] string propertyName = "")
         {
-            RaisePropertyChanging(propertyName);
+            RaisePropertyChanging(propertyName, context);
             field = value;
-            RaisePropertyChanged(propertyName);
+            RaisePropertyChanged(propertyName, context);
         }
 
         // Setzt ein Feld direkt ohne Dirty, feuert nur Events
         // Speziell für Model Property (MVVM)
-        protected void SetDirectly<T>(Action<T?> setter, T? value, [CallerMemberName] string propertyName = "")
+        protected void SetDirectly<T>(
+            Action<T?> setter, 
+            T? value,
+            PropertyChangeContext? context = null, 
+            [CallerMemberName] string propertyName = "")
         {
-            RaisePropertyChanging(propertyName);
+            RaisePropertyChanging(propertyName, context);
             setter(value);
-            RaisePropertyChanged(propertyName);
+            RaisePropertyChanged(propertyName, context);
         }
 
         // Setzt ein Feld direkt ohne Dirty, feuert nur Events
@@ -311,6 +376,7 @@ namespace Sachssoft.Sasopuls
             IPropertyStore? store,
             T? value,
             NullStoreBehavior nullStoreBehavior = NullStoreBehavior.ThrowException,
+            PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = "")
         {
             if (store == null)
@@ -324,8 +390,8 @@ namespace Sachssoft.Sasopuls
                         throw new ArgumentNullException(nameof(store), $"Store cannot be null for property {propertyName}");
 
                     case NullStoreBehavior.NotifyOnly:
-                        RaisePropertyChanging(propertyName);
-                        RaisePropertyChanged(propertyName);
+                        RaisePropertyChanging(propertyName, context);
+                        RaisePropertyChanged(propertyName, context);
                         return;
 
                     default:
@@ -333,9 +399,9 @@ namespace Sachssoft.Sasopuls
                 }
             }
 
-            RaisePropertyChanging(propertyName);
+            RaisePropertyChanging(propertyName, context);
             store.Set(propertyName, value);
-            RaisePropertyChanged(propertyName);
+            RaisePropertyChanged(propertyName, context);
         }
 
         #endregion
@@ -354,7 +420,7 @@ namespace Sachssoft.Sasopuls
         }
 
         // Protected, damit abgeleitete Klassen direkt Benachrichtigungen feuern können
-        protected void RaisePropertyChanged(string propertyName)
+        protected void RaisePropertyChanged(string propertyName, PropertyChangeContext? context = null)
         {
             if (_isFrozen) return;
 
@@ -383,16 +449,16 @@ namespace Sachssoft.Sasopuls
                 }
                 else
                 {
-                    OnPropertyChanged(new PropertyChangedEventArgs(propertyName));
+                    OnPropertyChanged(new PropertyChangedContextEventArgs(propertyName, context));
                 }
             }
         }
 
         // Protected, feuert PropertyChanging
-        protected void RaisePropertyChanging(string propertyName)
+        protected void RaisePropertyChanging(string propertyName, PropertyChangeContext? context = null)
         {
             if (_isFrozen) return;
-            OnPropertyChanging(new PropertyChangingEventArgs(propertyName));
+            OnPropertyChanging(new PropertyChangingContextEventArgs(propertyName, context));
         }
 
         // Verzögerte Properties auslösen
@@ -403,7 +469,7 @@ namespace Sachssoft.Sasopuls
                 if (_delayedProperties != null)
                 {
                     foreach (var prop in _delayedProperties)
-                        OnPropertyChanged(new PropertyChangedEventArgs(prop));
+                        OnPropertyChanged(new PropertyChangedContextEventArgs(prop));
 
                     _delayedProperties.Clear();
                     _delayCts = null;
@@ -415,12 +481,12 @@ namespace Sachssoft.Sasopuls
 
         #region Protected Event Invokers
 
-        protected virtual void OnPropertyChanging(PropertyChangingEventArgs e)
+        protected virtual void OnPropertyChanging(PropertyChangingContextEventArgs e)
         {
             PropertyChanging?.Invoke(this, e);
         }
 
-        protected virtual void OnPropertyChanged(PropertyChangedEventArgs e)
+        protected virtual void OnPropertyChanged(PropertyChangedContextEventArgs e)
         {
             PropertyChanged?.Invoke(this, e);
         }
@@ -458,11 +524,11 @@ namespace Sachssoft.Sasopuls
             public NotifySuppressor(NotifyObject obj)
             {
                 _obj = obj;
-                _prevFreeze = obj.Freeze;
-                obj.Freeze = true;
+                _prevFreeze = obj.IsFrozen;
+                obj.IsFrozen = true;
             }
 
-            public void Dispose() => _obj.Freeze = _prevFreeze;
+            public void Dispose() => _obj.IsFrozen = _prevFreeze;
         }
 
         // Hilfsklasse für DelayNotify

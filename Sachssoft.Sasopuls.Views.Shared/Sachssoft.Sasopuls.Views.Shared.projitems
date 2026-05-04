@@ -9,10 +9,18 @@
     <Import_RootNamespace>Sachssoft.Sasopuls</Import_RootNamespace>
   </PropertyGroup>
   <ItemGroup>
+    <Compile Include="$(MSBuildThisFileDirectory)Basic\INotifyPropertyChangedContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Basic\INotifyPropertyChangingContext.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Basic\IPropertyStore.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Basic\Nothing.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Basic\NotifyObject.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Basic\PropertyChangedContextEventArgs.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Basic\PropertyChangingContextEventArgs.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Basic\NullStoreBehavior.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Basic\PropertyChangeContext.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\IHasPropertyChangedFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\PropertyChangedFilter.cs" />
+    <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\PropertyChangedFilterBuilder.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\ActionCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\CommandBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\CommandPolicy.cs" />
@@ -51,5 +59,8 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="$(MSBuildThisFileDirectory)ViewModels\README.md" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="$(MSBuildThisFileDirectory)Inspector\" />
   </ItemGroup>
 </Project>
