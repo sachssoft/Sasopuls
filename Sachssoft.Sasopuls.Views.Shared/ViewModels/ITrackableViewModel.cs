@@ -2,9 +2,9 @@
 {
     public interface ITrackableViewModel
     {
-        bool Dirty { get; }
+        bool IsDirty { get; }
 
-        bool Freeze { get; set; }
+        bool IsFrozen { get; set; }
 
         void MarkDirty();
 
