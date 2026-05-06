@@ -17,7 +17,7 @@ namespace Sachssoft.Sasopuls.Basic
         {
             OldValue = oldValue;
             NewValue = newValue;
-            Context = context = new PropertyChangeContext();
+            Context = context ??= new PropertyChangeContext();
         }
 
         public object? OldValue { get; }

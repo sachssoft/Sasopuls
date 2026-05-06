@@ -1,4 +1,5 @@
-﻿using Sachssoft.Sasopuls.Basic;
+﻿using Avalonia;
+using Sachssoft.Sasopuls.Basic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -15,8 +16,10 @@ namespace Sachssoft.Sasopuls
     /// </summary>
     public class NotifyObject : IDisposable, INotifyPropertyChangedContext, INotifyPropertyChangingContext
     {
-        private event PropertyChangedEventHandler? _propertyChangedBridge;
-        private event PropertyChangingEventHandler? _propertyChangingBridge;
+        private EventHandler<PropertyChangingContextEventArgs>? _propertyChanging;
+        private EventHandler<PropertyChangedContextEventArgs>? _propertyChanged;
+        private PropertyChangingEventHandler? _propertyChangingInternal;
+        private PropertyChangedEventHandler? _propertyChangedInternal;
 
         private readonly List<NotifyObject> _childDirtyObjects = new();
         private bool _isDirty;
@@ -24,64 +27,38 @@ namespace Sachssoft.Sasopuls
 
         private readonly object _delayLock = new();
         private int _delayCount;
-        private HashSet<string>? _delayedProperties;
+        private Dictionary<string, PropertyChangeContext>? _delayedProperties;
         private CancellationTokenSource? _delayCts;
         private int _delayMilliseconds = 100; // Standard-Verzögerung
 
         public event EventHandler? DirtyActivated;
 
-        public event EventHandler<PropertyChangingContextEventArgs>? PropertyChanging;
-        public event EventHandler<PropertyChangedContextEventArgs>? PropertyChanged;
+        #region Event
 
-        #region Event Bridge
-
-        private void OnPropertyChangedContext(object? sender, PropertyChangedContextEventArgs e)
+        public event EventHandler<PropertyChangingContextEventArgs>? PropertyChanging
         {
-            _propertyChangedBridge?.Invoke(sender, new PropertyChangedEventArgs(e.PropertyName));
+            add => _propertyChanging += value;
+            remove => _propertyChanging -= value;
         }
 
-        private void OnPropertyChangingContext(object? sender, PropertyChangingContextEventArgs e)
+        public event EventHandler<PropertyChangedContextEventArgs>? PropertyChanged
         {
-            _propertyChangingBridge?.Invoke(sender, new PropertyChangingEventArgs(e.PropertyName));
+            add => _propertyChanged += value;
+            remove => _propertyChanged -= value;
         }
 
-        // === INotifyPropertyChanged ===
-        event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged
-        {
-            add
-            {
-                if (_propertyChangedBridge == null)
-                    PropertyChanged += OnPropertyChangedContext;
-
-                _propertyChangedBridge += value;
-            }
-            remove
-            {
-                _propertyChangedBridge -= value;
-
-                if (_propertyChangedBridge == null)
-                    PropertyChanged -= OnPropertyChangedContext;
-            }
-        }
-
-        // === INotifyPropertyChanging ===
         event PropertyChangingEventHandler? INotifyPropertyChanging.PropertyChanging
         {
-            add
-            {
-                if (_propertyChangingBridge == null)
-                    PropertyChanging += OnPropertyChangingContext;
-
-                _propertyChangingBridge += value;
-            }
-            remove
-            {
-                _propertyChangingBridge -= value;
-
-                if (_propertyChangingBridge == null)
-                    PropertyChanging -= OnPropertyChangingContext;
-            }
+            add => _propertyChangingInternal += value;
+            remove => _propertyChangingInternal -= value;
         }
+
+        event PropertyChangedEventHandler? INotifyPropertyChanged.PropertyChanged
+        {
+            add => _propertyChangedInternal += value;
+            remove => _propertyChangedInternal -= value;
+        }
+
         #endregion
 
         #region Dirty State
@@ -205,9 +182,9 @@ namespace Sachssoft.Sasopuls
 
         // Setzt ein Feld, feuert PropertyChanged und markiert Dirty
         protected void SetAndMarkDirty<T>(
-            ref T? field, 
-            T? value, 
-            PropertyChangeContext? context = null, 
+            ref T? field,
+            T? value,
+            PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = "")
         {
             if (!EqualityComparer<T?>.Default.Equals(field, value))
@@ -221,10 +198,10 @@ namespace Sachssoft.Sasopuls
         // Setzt ein Feld, feuert PropertyChanged und markiert Dirty
         // Speziell für Model Property (MVVM)
         protected void SetAndMarkDirty<T>(
-            Func<T?> getter, 
-            Action<T?> setter, 
-            T? value, 
-            PropertyChangeContext? context = null, 
+            Func<T?> getter,
+            Action<T?> setter,
+            T? value,
+            PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = "")
         {
             if (!EqualityComparer<T?>.Default.Equals(getter(), value))
@@ -276,8 +253,8 @@ namespace Sachssoft.Sasopuls
 
         // Setzt ein Feld, feuert PropertyChanging und PropertyChanged
         protected bool SetAndNotify<T>(
-            ref T? field, 
-            T? value, 
+            ref T? field,
+            T? value,
             PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = "")
         {
@@ -292,9 +269,9 @@ namespace Sachssoft.Sasopuls
         // Setzt ein Feld, feuert PropertyChanging und PropertyChanged
         // Speziell für Model Property (MVVM)
         protected bool SetAndNotify<T>(
-            Func<T?> getter, 
-            Action<T?> setter, 
-            T? value, 
+            Func<T?> getter,
+            Action<T?> setter,
+            T? value,
             PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = "")
         {
@@ -347,9 +324,9 @@ namespace Sachssoft.Sasopuls
 
         // Setzt ein Feld direkt ohne Dirty, feuert nur Events
         protected void SetDirectly<T>(
-            ref T? field, 
-            T? value, 
-            PropertyChangeContext? context = null, 
+            ref T? field,
+            T? value,
+            PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = "")
         {
             RaisePropertyChanging(propertyName, context);
@@ -360,9 +337,9 @@ namespace Sachssoft.Sasopuls
         // Setzt ein Feld direkt ohne Dirty, feuert nur Events
         // Speziell für Model Property (MVVM)
         protected void SetDirectly<T>(
-            Action<T?> setter, 
+            Action<T?> setter,
             T? value,
-            PropertyChangeContext? context = null, 
+            PropertyChangeContext? context = null,
             [CallerMemberName] string propertyName = "")
         {
             RaisePropertyChanging(propertyName, context);
@@ -428,8 +405,8 @@ namespace Sachssoft.Sasopuls
             {
                 if (_delayCount > 0)
                 {
-                    _delayedProperties ??= new HashSet<string>();
-                    _delayedProperties.Add(propertyName);
+                    _delayedProperties ??= new Dictionary<string, PropertyChangeContext>();
+                    _delayedProperties.Add(propertyName, context ?? new PropertyChangeContext());
 
                     // Timer neu starten
                     _delayCts?.Cancel();
@@ -449,7 +426,7 @@ namespace Sachssoft.Sasopuls
                 }
                 else
                 {
-                    OnPropertyChanged(new PropertyChangedContextEventArgs(propertyName, context));
+                    OnPropertyChanged(new PropertyChangedContextEventArgs(propertyName, context: context));
                 }
             }
         }
@@ -469,7 +446,7 @@ namespace Sachssoft.Sasopuls
                 if (_delayedProperties != null)
                 {
                     foreach (var prop in _delayedProperties)
-                        OnPropertyChanged(new PropertyChangedContextEventArgs(prop));
+                        OnPropertyChanged(new PropertyChangedContextEventArgs(prop.Key, context: prop.Value));
 
                     _delayedProperties.Clear();
                     _delayCts = null;
@@ -483,12 +460,14 @@ namespace Sachssoft.Sasopuls
 
         protected virtual void OnPropertyChanging(PropertyChangingContextEventArgs e)
         {
-            PropertyChanging?.Invoke(this, e);
+            _propertyChanging?.Invoke(this, e);
+            _propertyChangingInternal?.Invoke(this, e);
         }
 
         protected virtual void OnPropertyChanged(PropertyChangedContextEventArgs e)
         {
-            PropertyChanged?.Invoke(this, e);
+            _propertyChanged?.Invoke(this, e);
+            _propertyChangedInternal?.Invoke(this, e);
         }
 
         #endregion
