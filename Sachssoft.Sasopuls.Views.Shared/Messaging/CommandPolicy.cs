@@ -37,11 +37,6 @@ namespace Sachssoft.Sasopuls.Messaging
             CanExecuteChanged?.Invoke(this, EventArgs.Empty);
         }
 
-        [Obsolete("Use Invalidate() instead.")]
-        [EditorBrowsable(EditorBrowsableState.Never)]
-        public void RaiseCanExecuteChanged()
-            => Invalidate();
-
         // -------------------------
         // Core evaluation
         // -------------------------
