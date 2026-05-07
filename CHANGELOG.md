@@ -3,6 +3,7 @@
 - [Improvement] Refactored inspector system
 - [Feature] Added PropertyChangeContext parameter to all notify methods
 - [Feature] Introduced PropertyChangeContext supporting filtering via Filters
+- [Feature] Views: Added Localized markup extension
 - [Bug] Fixed cast error in `ViewModelFactoryRegistry.Build` Cast Error .
 
 # Version 1.1.3 - 2026-05-01
