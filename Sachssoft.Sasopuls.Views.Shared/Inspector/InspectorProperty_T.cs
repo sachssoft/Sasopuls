@@ -28,6 +28,8 @@ namespace Sachssoft.Sasopuls.Inspector
 
         public string Name { get; }
 
+        public Type Type => typeof(T);
+
         public InspectorSchema<TOwner> Schema { get; }
 
         IInspectorSchema IInspectorProperty.Schema => Schema;

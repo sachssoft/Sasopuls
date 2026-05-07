@@ -10,6 +10,8 @@ namespace Sachssoft.Sasopuls.Inspector
 
         string Name { get; }
 
+        Type Type { get; }
+
         IInspectorSchema Schema { get; }
 
         InspectorPropertyMetadata Metadata { get; }

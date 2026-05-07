@@ -56,6 +56,8 @@ namespace Sachssoft.Sasopuls.Inspector
 
         public TOwner Owner => _owner;
 
+        object IInspectorSchema.Owner => Owner;
+
         public IReadOnlyDictionary<string, IInspectorProperty> Properties => _properties;
 
         public bool TryGet(string name, out IInspectorProperty? property)

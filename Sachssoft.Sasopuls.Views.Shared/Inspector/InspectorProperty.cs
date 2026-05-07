@@ -29,6 +29,8 @@ namespace Sachssoft.Sasopuls.Inspector
 
         public string Name { get; }
 
+        public Type Type => _type;
+
         public InspectorSchema Schema { get; }
 
         IInspectorSchema IInspectorProperty.Schema => Schema;
