@@ -1,49 +1,49 @@
 ﻿using Avalonia;
-using Avalonia.Controls;
 using Avalonia.Markup.Xaml;
 using Avalonia.Markup.Xaml.MarkupExtensions;
 using Sachssoft.Sasopuls.Models;
 using System;
 
-namespace Sachssoft.Sasopuls.Views;
-
-public class LocalizedExtension : MarkupExtension
+namespace Sachssoft.Sasopuls.Views
 {
-    public ILocalized? Localized { get; }
 
-    public LocalizedExtension()
+    public class LocalizedExtension : MarkupExtension
     {
-    }
+        public ILocalized? Localized { get; }
 
-    public LocalizedExtension(ILocalized localized)
-    {
-        Localized = localized;
-    }
+        public LocalizedExtension()
+        {
+        }
 
-    public override object ProvideValue(IServiceProvider serviceProvider)
-    {
-        //if (Localized == null)
-        //    return string.Empty;
+        public LocalizedExtension(ILocalized localized)
+        {
+            Localized = localized;
+        }
 
-        //var key = Localized.Key;
+        // Hinweis:
+        // Diese Vorprüfung ist nicht zuverlässig, da TryGetResource nur den aktuellen Resource-Scope prüft.
+        // Resources können z. B. durch Theme- oder Dictionary-Wechsel später verfügbar werden,
+        // werden hier aber fälschlich als "nicht vorhanden" bewertet.
+        // Daher kann es zu inkonsistentem Verhalten zwischen Initial- und Runtime-Auflösung kommen.
+        public override object ProvideValue(IServiceProvider serviceProvider)
+        {
+            if (Localized == null)
+                return string.Empty;
 
-        //var target = serviceProvider.GetService(typeof(IProvideValueTarget))
-        //    as IProvideValueTarget;
+            var key = Localized.Key;
 
-        //if (target?.TargetObject is StyledElement styledElement)
-        //{
-        //    if (styledElement.TryGetResource(key, null, out var value))
-        //    {
-        //        if (value is string text)
-        //            return text;
-        //    }
-        //}
+            var target = serviceProvider.GetService(typeof(IProvideValueTarget))
+                as IProvideValueTarget;
 
-        //return Localized.Fallback ?? string.Empty;
+            if (target?.TargetObject is StyledElement styledElement)
+            {
+                if (styledElement.TryGetResource(key, null, out var value))
+                {
+                    return new DynamicResourceExtension(key);
+                }
+            }
 
-        if (Localized == null)
-            return string.Empty;
-
-        return new DynamicResourceExtension(Localized.Key);
+            return Localized.Fallback ?? string.Empty;
+        }
     }
 }

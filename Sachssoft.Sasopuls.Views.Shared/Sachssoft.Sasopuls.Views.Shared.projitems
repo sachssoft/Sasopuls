@@ -22,21 +22,6 @@
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\IHasPropertyChangedFilter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\PropertyChangedFilter.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Infrastructure\PropertyChangedFilterBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\Constraints\EnumConstraint_T.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\Constraints\EnumField.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\Constraints\RangeConstraint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\IInspectorConstraint.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\IInspectorSchema.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\IInspectorSchemaProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorProperty.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorPropertyCategory.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorPropertyChangingEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorSchema.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorSchemaBuilder.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorPropertyChangedEventArgs.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorSchema_T.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorValueKind.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\ValidationResult.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\ActionCommand.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\CommandBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)Messaging\CommandPolicy.cs" />
@@ -62,14 +47,10 @@
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelFactoryContextProvider.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelCreator.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\IViewModelTypeProvider.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\IInspectorProperty.cs" />
-    <Compile Include="..\Sachssoft.Sasopuls.Views.Shared\Inspector\InspectorPropertyMetadata.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelBase.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ModelViewModelBase_T.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelFactoryRegistry.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ModelViewModelFactory_T.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorSchemaBuilder_T.cs" />
-    <Compile Include="$(MSBuildThisFileDirectory)Inspector\InspectorProperty_T.cs" />
     <Compile Include="$(MSBuildThisFileDirectory)ViewModels\ViewModelSelector.cs" />
   </ItemGroup>
   <ItemGroup>

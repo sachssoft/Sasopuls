@@ -77,7 +77,7 @@ namespace Sachssoft.Sasopuls.ViewModels
         // Baut ein ViewModel anhand des übergebenen Models.  
         // Sucht eine passende Factory über den ModelType (inkl. Vererbung via IsAssignableFrom).  
         // Wirft eine Exception, wenn keine passende Factory registriert ist.
-        public ViewModelBase Build(object model) => BuildInternal(model); 
+        public ViewModelBase Build(object model) => BuildInternal(model);
 
         public ViewModelBase Build<TModel>(TModel model) => BuildInternal(
             model ?? throw new ArgumentNullException(nameof(model))

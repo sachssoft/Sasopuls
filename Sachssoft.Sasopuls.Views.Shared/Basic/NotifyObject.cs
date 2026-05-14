@@ -1,5 +1,4 @@
-﻿using Avalonia;
-using Sachssoft.Sasopuls.Basic;
+﻿using Sachssoft.Sasopuls.Basic;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;

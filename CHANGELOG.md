@@ -1,6 +1,7 @@
 # Version 2.0.0-alpha.1 - 2026-05-
+- [Change] Removed inspector system → moved to Sachssoft.Sasospector
+- [Improvement] Removed obsolete methods and APIs
 - [Improvement] Refactored property change handling and internal event pipeline
-- [Improvement] Refactored inspector system
 - [Feature] Added PropertyChangeContext parameter to all notify methods
 - [Feature] Introduced PropertyChangeContext supporting filtering via Filters
 - [Feature] Views: Added Localized markup extension
