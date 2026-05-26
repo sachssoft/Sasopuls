@@ -18,9 +18,19 @@ namespace Sachssoft.Sasopuls.ViewModels
             _model = model ?? throw new ArgumentNullException(nameof(model));
         }
 
-        // Zugriff nur für abgeleitete ViewModels (nicht für die View!)
-        // -> MVVM-Regel: View darf niemals direkt auf das Model zugreifen
-        protected TModel Model => _model;
+        // ALT (v1.0): protected TModel Model => _model; 
+        // -> Verhindert das XAML-Binding in der View und blockiert den Zugriff der Inspektor-Schicht.
+
+        /// <summary>
+        /// Liefert das zugrundeliegende Model für das Datenbinding in der View (ReadOnly) 
+        /// sowie für die dynamische Analyse durch die Inspektor-Schicht.
+        /// </summary>
+        /// <remarks>
+        /// V2.0 KORREKTUR: Die Eigenschaft ist bewusst 'public', damit WPF/MAUI-Bindings 
+        /// und externe Inspektor-Tools ohne Reflexions-Fehler auf die Daten zugreifen können.
+        /// Da das Model hier nur durchgereicht wird, bleibt die MVVM-Schichtentrennung gewahrt.
+        /// </remarks>
+        public TModel Model => _model;
 
         /// <summary>
         /// Indicates whether ReloadAsync is currently running

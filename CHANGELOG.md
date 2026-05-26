@@ -2,6 +2,7 @@
 - [Change] Removed inspector system → moved to Sachssoft.Sasospector
 - [Improvement] Removed obsolete methods and APIs
 - [Improvement] Refactored property change handling and internal event pipeline
+- [Improvement] Changed 'Model' from protected to public to enable property pass-through for UI and middle layers, such as the Inspector.
 - [Feature] Added PropertyChangeContext parameter to all notify methods
 - [Feature] Introduced PropertyChangeContext supporting filtering via Filters
 - [Feature] Views: Added Localized markup extension
