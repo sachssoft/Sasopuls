@@ -1,6 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Text;
 
 namespace Sachssoft.Sasopuls.Models
 {
@@ -11,7 +9,7 @@ namespace Sachssoft.Sasopuls.Models
 
         public SortSequenceItem(
             string name,
-            Func<T, IComparable> selector 
+            Func<T, IComparable> selector
         )
         {
             _name = name;
